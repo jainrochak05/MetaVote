@@ -17,13 +17,41 @@ Here's what makes it special:
 
 ---
 
+## Blockchain Principles at Work
+
+MetaVote demonstrates the three core pillars of blockchain technology:
+
+### 🔗 Immutability
+Once data is written to the blockchain, it cannot be changed or deleted. Every candidate registration and every vote is a permanent entry in the chain — no admin, developer, or government can alter it.
+
+### 👁 Transparency
+All transactions (registrations, votes) are publicly visible on the blockchain. Anyone can independently verify the results without trusting a central authority.
+
+### 🤝 Consensus
+Transactions are validated by the network before being accepted. A vote or registration is only considered final once it has been confirmed in a block by the network's consensus mechanism.
+
+---
+
+## ⚠️ About Hardhat (Local Development Chain)
+
+> **Important:** This project uses **Hardhat**, which is a **local, private development blockchain** running only on your computer. It is **not decentralized** — it runs as a single node on `localhost:8545` and has no connection to the public Ethereum network.
+
+Hardhat is used for development and demos because:
+- It starts instantly with 20 pre-funded test accounts (10,000 ETH each — fake/test ETH, not real).
+- It resets on every restart, making it easy to test from a clean state.
+- It does not require real ETH or Internet access.
+
+For a real decentralized deployment, the contract would be deployed to a public network such as Ethereum Mainnet or the Sepolia testnet, where many independent nodes validate every transaction.
+
+---
+
 ## How the Election Works (Step by Step)
 
 ### For Candidates 🏛
 1. Open the app and go to the **Register** page.
 2. Connect your MetaMask wallet (this will be your candidate identity).
 3. Enter your **name** and write your **manifesto** — your promises and vision.
-4. Pay the **5 ETH registration fee** (this is deducted automatically when you confirm the transaction).
+4. Pay the **500 ETH registration fee** (this is deducted automatically when you confirm the transaction).
 5. Your name and manifesto are now permanently on the blockchain. Every voter can read them.
 
 > ⚠️ **Important:** The wallet you register with **cannot vote**. Use a separate wallet to vote.
@@ -123,7 +151,7 @@ Then open your browser and go to: **http://localhost:5173**
 
 ### Step 5 — Run the Election
 
-1. **Register a candidate:** Switch MetaMask to Account 1, go to `/register`, fill in name + manifesto, and confirm the 5 ETH transaction.
+1. **Register a candidate:** Switch MetaMask to Account 1, go to `/register`, fill in name + manifesto, and confirm the 500 ETH transaction.
 2. **Vote:** Switch MetaMask to Account 2, go to `/vote`, click the candidate's name to read the manifesto, then click Vote.
 3. **View results:** Go to `/results` — no wallet needed.
 4. **View transaction log:** Go to `/txlog` to see balance changes and transaction hashes.
@@ -150,18 +178,24 @@ MetaVote/
 
 | Rule | How it's enforced |
 |------|-------------------|
-| Registration costs 5 ETH | Contract rejects any transaction that doesn't include exactly 5 ETH |
+| Registration costs 500 ETH | Contract rejects any transaction that doesn't include exactly 500 ETH |
 | Each wallet registers once | Contract checks if the wallet is already a candidate |
-| Candidates cannot vote | The voting page blocks candidate wallets; the contract also enforces this |
+| Candidates cannot vote | The voting page blocks candidate wallets; the contract also enforces this at the smart-contract level |
 | Each wallet votes once | Contract tracks which wallets have voted |
 | Manifesto is immutable | Once stored on-chain, it cannot be modified |
+
+---
+
+## Gas Fees
+
+Gas fees depend on the network configuration. On the local Hardhat development chain, gas prices are minimal (essentially zero). On public networks (e.g., Sepolia, Mainnet), gas fees are determined by current network demand. The registration fee of 500 ETH is intentionally large so the balance change is clearly visible during local demos.
 
 ---
 
 ## Technology
 
 - **Solidity** — Smart contract language (the "rules engine" of the election)
-- **Hardhat** — Local blockchain for development and testing
+- **Hardhat** — Local blockchain for development and testing (private, single-node — not decentralized)
 - **React + Vite** — Fast, modern web frontend
 - **Ethers.js** — Library that connects the frontend to the blockchain
 - **MetaMask** — Browser wallet used to sign and submit transactions
@@ -172,4 +206,4 @@ MetaVote/
 
 - This project uses a **local Hardhat blockchain** for testing. The ETH used is not real.
 - For a real deployment, point the contract to a public testnet (e.g., Sepolia) and update `CONTRACT_ADDRESS` in `frontend/src/contract.js`.
-- The registration fee is set to **5 ETH** so the balance change is clearly visible during demos.
+- The registration fee is set to **500 ETH** so the balance change is clearly visible during demos.

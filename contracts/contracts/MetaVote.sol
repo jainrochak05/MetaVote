@@ -2,7 +2,7 @@
 pragma solidity ^0.8.20;
 
 contract MetaVote {
-    uint256 public constant REGISTRATION_FEE = 5 ether;
+    uint256 public constant REGISTRATION_FEE = 500 ether;
 
     struct Candidate {
         string name;
@@ -20,7 +20,7 @@ contract MetaVote {
     event Voted(address indexed voter, uint256 indexed candidateId);
 
     function registerCandidate(string calldata name, string calldata manifesto) external payable {
-        require(msg.value == REGISTRATION_FEE, "Fee must be 5 ETH");
+        require(msg.value == REGISTRATION_FEE, "Fee must be 500 ETH");
         require(bytes(name).length > 0, "Name required");
         require(bytes(manifesto).length > 0, "Manifesto required");
         require(!isCandidate[msg.sender], "Already registered");
@@ -38,6 +38,7 @@ contract MetaVote {
 
     function vote(uint256 candidateId) external {
         require(!hasVoted[msg.sender], "Already voted");
+        require(!isCandidate[msg.sender], "Candidates cannot vote");
         require(candidateId < candidates.length, "Invalid candidate");
 
         hasVoted[msg.sender] = true;
