@@ -1,4 +1,4 @@
-export const SEPOLIA_CHAIN_ID = "0x7A69"; // 31337;
+export const SEPOLIA_CHAIN_ID = "0x7A6A"; // 31338;
 
 export const CONTRACT_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 export const RPC_URL = "https://99b3-2405-201-400b-5039-353a-4530-848c-c5df.ngrok-free.app";
