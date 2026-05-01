@@ -18,7 +18,7 @@ export default function ResultsPage() {
       const list = fetched.map((c, i) => ({
         id: i,
         name: c.name,
-        manifestoHash: c.manifestoHash,
+        manifesto: c.manifesto,
         voteCount: Number(c.voteCount),
         wallet: c.wallet,
       }));

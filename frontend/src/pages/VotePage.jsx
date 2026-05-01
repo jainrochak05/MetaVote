@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
+import { ethers } from "ethers";
 import { useWallet } from "../context/WalletContext";
+import { logTransaction } from "../utils/txLogger";
 
 export default function VotePage() {
-  const { account, contract, connectWallet, isConnected, connecting, chainError } = useWallet();
+  const { account, contract, provider, connectWallet, isConnected, connecting, chainError } = useWallet();
 
   const [candidates, setCandidates] = useState([]);
   const [myVote, setMyVote] = useState(null);
@@ -10,6 +12,7 @@ export default function VotePage() {
   const [loading, setLoading] = useState(false);
   const [votingId, setVotingId] = useState(null);
   const [status, setStatus] = useState(null);
+  const [expandedManifesto, setExpandedManifesto] = useState(null);
 
   const loadData = useCallback(async () => {
     if (!contract || !account) return;
@@ -19,7 +22,7 @@ export default function VotePage() {
       const list = fetched.map((c, i) => ({
         id: i,
         name: c.name,
-        manifestoHash: c.manifestoHash,
+        manifesto: c.manifesto,
         voteCount: Number(c.voteCount),
         wallet: c.wallet,
       }));
@@ -68,9 +71,37 @@ export default function VotePage() {
     setStatus({ type: "info", text: "Awaiting MetaMask confirmation…" });
 
     try {
+      // Capture balance before
+      let balanceBefore = null;
+      try {
+        if (provider) balanceBefore = await provider.getBalance(account);
+      } catch { /* non-critical */ }
+
       const tx = await contract.vote(candidateId);
       setStatus({ type: "info", text: "Transaction submitted. Waiting for confirmation…" });
-      await tx.wait();
+      const receipt = await tx.wait();
+
+      // Capture balance after
+      let balanceAfter = null;
+      try {
+        if (provider) balanceAfter = await provider.getBalance(account);
+      } catch { /* non-critical */ }
+
+      const candidateName = candidates.find((c) => c.id === candidateId)?.name || "Unknown";
+
+      logTransaction("VOTE_CAST", {
+        wallet: account,
+        candidateId,
+        candidateName,
+        txHash: receipt.hash,
+        blockNumber: receipt.blockNumber,
+        balanceBefore: balanceBefore !== null ? ethers.formatEther(balanceBefore) : null,
+        balanceAfter: balanceAfter !== null ? ethers.formatEther(balanceAfter) : null,
+        balanceChange: (balanceBefore !== null && balanceAfter !== null)
+          ? ethers.formatEther(balanceAfter - balanceBefore)
+          : null,
+      });
+
       setStatus({ type: "success", text: "🎉 Vote cast successfully!" });
       await loadData();
     } catch (err) {
@@ -80,6 +111,10 @@ export default function VotePage() {
     } finally {
       setVotingId(null);
     }
+  };
+
+  const toggleManifesto = (candidateId) => {
+    setExpandedManifesto(expandedManifesto === candidateId ? null : candidateId);
   };
 
   const maxVotes = candidates.reduce((m, c) => Math.max(m, c.voteCount), 0);
@@ -155,6 +190,7 @@ export default function VotePage() {
                 const progress = maxVotes > 0 ? (candidate.voteCount / maxVotes) * 100 : 0;
                 const votedForThis = myVote?.voted && myVote.candidateId === candidate.id;
                 const canVote = !isCandidateSelf && !myVote?.voted;
+                const manifestoOpen = expandedManifesto === candidate.id;
 
                 return (
                   <div
@@ -164,10 +200,34 @@ export default function VotePage() {
                     {isWinner && <div className="leading-badge">🏆 Leading</div>}
                     {votedForThis && <div className="voted-badge">Your Vote</div>}
 
-                    <h3 className="candidate-name">{candidate.name}</h3>
+                    <button
+                      className="candidate-name-btn"
+                      onClick={() => toggleManifesto(candidate.id)}
+                      aria-label={manifestoOpen ? `Hide manifesto for ${candidate.name}` : `View manifesto for ${candidate.name}`}
+                      title={manifestoOpen ? "Hide manifesto" : "View manifesto"}
+                    >
+                      <h3 className="candidate-name">{candidate.name}</h3>
+                      <span className="manifesto-toggle-icon">{manifestoOpen ? "▲" : "▼"}</span>
+                    </button>
                     <p className="candidate-wallet muted">
                       {candidate.wallet.slice(0, 8)}…{candidate.wallet.slice(-6)}
                     </p>
+
+                    {manifestoOpen && (
+                      <div className="manifesto-panel">
+                        <div className="manifesto-panel-header">
+                          <span className="manifesto-panel-icon">📜</span>
+                          <span className="manifesto-panel-title">Public Manifesto</span>
+                          <span className="manifesto-panel-tag">On-Chain · Immutable</span>
+                        </div>
+                        <p className="manifesto-panel-text">{candidate.manifesto}</p>
+                        <p className="manifesto-panel-note">
+                          This manifesto is a <strong>permanent digital contract</strong> between{" "}
+                          {candidate.name} and all voters — recorded on the public blockchain and
+                          cannot be altered or deleted.
+                        </p>
+                      </div>
+                    )}
 
                     <div className="vote-stats">
                       <span className="vote-count">{candidate.voteCount}</span>

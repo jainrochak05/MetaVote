@@ -5,6 +5,7 @@ import HomePage from "./pages/HomePage";
 import RegisterPage from "./pages/RegisterPage";
 import VotePage from "./pages/VotePage";
 import ResultsPage from "./pages/ResultsPage";
+import TxLogPage from "./pages/TxLogPage";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/vote" element={<VotePage />} />
               <Route path="/results" element={<ResultsPage />} />
+              <Route path="/txlog" element={<TxLogPage />} />
             </Routes>
           </div>
         </div>

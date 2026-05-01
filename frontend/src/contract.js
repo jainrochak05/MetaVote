@@ -1,7 +1,7 @@
 export const SEPOLIA_CHAIN_ID = "0x7A69"; // 31337;
 
 export const CONTRACT_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
-export const RPC_URL = "https://99b3-2405-201-400b-5039-353a-4530-848c-c5df.ngrok-free.app";
+export const RPC_URL = "http://127.0.0.1:8545";
 
 export const CONTRACT_ABI = [
   {
@@ -14,7 +14,7 @@ export const CONTRACT_ABI = [
   {
     "inputs": [
       { "internalType": "string", "name": "name", "type": "string" },
-      { "internalType": "string", "name": "manifestoHash", "type": "string" }
+      { "internalType": "string", "name": "manifesto", "type": "string" }
     ],
     "name": "registerCandidate",
     "outputs": [],
@@ -35,7 +35,7 @@ export const CONTRACT_ABI = [
       {
         "components": [
           { "internalType": "string", "name": "name", "type": "string" },
-          { "internalType": "string", "name": "manifestoHash", "type": "string" },
+          { "internalType": "string", "name": "manifesto", "type": "string" },
           { "internalType": "uint256", "name": "voteCount", "type": "uint256" },
           { "internalType": "address", "name": "wallet", "type": "address" }
         ],
@@ -64,7 +64,7 @@ export const CONTRACT_ABI = [
       { "internalType": "string[]", "name": "names", "type": "string[]" },
       { "internalType": "uint256[]", "name": "voteCounts", "type": "uint256[]" },
       { "internalType": "address[]", "name": "wallets", "type": "address[]" },
-      { "internalType": "string[]", "name": "manifestoHashes", "type": "string[]" }
+      { "internalType": "string[]", "name": "manifestos", "type": "string[]" }
     ],
     "stateMutability": "view",
     "type": "function"
