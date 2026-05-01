@@ -75,7 +75,7 @@ export default function VotePage() {
       await loadData();
     } catch (err) {
       console.error(err);
-      const msg = err?.reason || err?.message || "Voting failed.";
+      const msg = err?.reason || err?.message || "Voting transaction failed. Please check your wallet and try again.";
       setStatus({ type: "error", text: msg });
     } finally {
       setVotingId(null);

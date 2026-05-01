@@ -29,9 +29,17 @@ export function WalletProvider({ children }) {
         }
       });
 
-      // Listen for chain changes
-      window.ethereum.on("chainChanged", () => {
-        window.location.reload();
+      // Listen for chain changes — update provider and clear contract state gracefully
+      window.ethereum.on("chainChanged", (newChainId) => {
+        const p2 = new ethers.BrowserProvider(window.ethereum);
+        setProvider(p2);
+        setContract(null);
+        setAccount("");
+        if (newChainId.toLowerCase() !== SEPOLIA_CHAIN_ID.toLowerCase()) {
+          setChainError(`Wrong network detected. Please switch to Chain ID ${parseInt(SEPOLIA_CHAIN_ID, 16)}.`);
+        } else {
+          setChainError("");
+        }
       });
     }
 
@@ -53,7 +61,7 @@ export function WalletProvider({ children }) {
           params: [{ chainId: SEPOLIA_CHAIN_ID }],
         });
       } catch {
-        setChainError(`Please switch to Chain ID ${parseInt(SEPOLIA_CHAIN_ID, 16)} in MetaMask.`);
+        setChainError(`Wrong network. Please switch to the correct network (Chain ID ${parseInt(SEPOLIA_CHAIN_ID, 16)}) in MetaMask.`);
         throw new Error("Wrong chain");
       }
     }

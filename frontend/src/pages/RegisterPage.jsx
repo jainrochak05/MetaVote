@@ -72,7 +72,7 @@ export default function RegisterPage() {
       await loadFeeAndCheck();
     } catch (err) {
       console.error(err);
-      const msg = err?.reason || err?.message || "Registration failed.";
+      const msg = err?.reason || err?.message || "Registration transaction failed. Please check your wallet balance and try again.";
       setStatus({ type: "error", text: msg });
     } finally {
       setSubmitting(false);
