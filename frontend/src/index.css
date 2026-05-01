@@ -635,3 +635,181 @@ textarea { min-height: 130px; resize: vertical; }
   .steps { flex-direction: column; align-items: center; }
   .step-arrow { transform: rotate(90deg); }
 }
+
+/* ─── Candidate Name Button (manifesto toggle) ─────────────────── */
+.candidate-name-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: inherit;
+  text-align: left;
+  width: 100%;
+}
+.candidate-name-btn:hover .candidate-name {
+  color: #c4b5fd;
+}
+.manifesto-toggle-icon {
+  font-size: 0.7rem;
+  color: var(--muted);
+  flex-shrink: 0;
+  transition: color .2s;
+}
+.candidate-name-btn:hover .manifesto-toggle-icon {
+  color: #c4b5fd;
+}
+
+/* ─── Manifesto Panel ───────────────────────────────────────────── */
+.manifesto-panel {
+  background: rgba(124,58,237,.07);
+  border: 1px solid rgba(124,58,237,.25);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  animation: fadeIn .2s ease;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.manifesto-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.manifesto-panel-icon { font-size: 1rem; }
+.manifesto-panel-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+  color: #c4b5fd;
+}
+.manifesto-panel-tag {
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: 20px;
+  background: rgba(34,197,94,.12);
+  color: var(--success);
+  border: 1px solid rgba(34,197,94,.25);
+  font-weight: 600;
+}
+.manifesto-panel-text {
+  font-size: 0.88rem;
+  color: var(--text);
+  line-height: 1.65;
+  white-space: pre-wrap;
+}
+.manifesto-panel-note {
+  font-size: 0.75rem;
+  color: var(--muted);
+  line-height: 1.55;
+  border-top: 1px solid rgba(124,58,237,.15);
+  padding-top: 8px;
+  margin-top: 2px;
+}
+
+/* ─── Manifesto Pledge Banner (Register Page) ───────────────────── */
+.manifesto-pledge-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 16px;
+  background: rgba(124,58,237,.08);
+  border: 1px solid rgba(124,58,237,.22);
+  border-radius: var(--radius-sm);
+  margin-bottom: 20px;
+  font-size: 0.85rem;
+  color: #c4b5fd;
+  line-height: 1.55;
+}
+.pledge-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 1px; }
+
+/* ─── Tx Log Page ───────────────────────────────────────────────── */
+.txlog-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.txlog-count {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+.txlog-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+.btn-danger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 18px;
+  border: 1px solid rgba(239,68,68,.4);
+  border-radius: var(--radius-md);
+  background: rgba(239,68,68,.08);
+  color: #f87171;
+  font-weight: 600;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: background .2s, transform .15s;
+}
+.btn-danger:hover:not(:disabled) { background: rgba(239,68,68,.18); transform: translateY(-1px); }
+.btn-danger:disabled { opacity: .4; cursor: not-allowed; }
+
+.txlog-list { display: flex; flex-direction: column; gap: 16px; }
+
+.txlog-entry {}
+.txlog-entry-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.txlog-type-icon { font-size: 1.3rem; }
+.txlog-type-label { font-weight: 700; font-size: 0.95rem; }
+.txlog-timestamp { font-size: 0.8rem; margin-left: auto; }
+
+.txlog-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}
+.txlog-field {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.txlog-field-full {
+  grid-column: 1 / -1;
+}
+.txlog-field-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+  color: var(--muted);
+}
+.txlog-field-value {
+  font-size: 0.88rem;
+  color: var(--text);
+  word-break: break-word;
+}
+.txlog-change { font-weight: 700; }
+.txlog-hash {
+  font-size: 0.78rem;
+  word-break: break-all;
+  color: #c4b5fd;
+  font-family: monospace;
+  background: rgba(124,58,237,.1);
+  padding: 4px 8px;
+  border-radius: 4px;
+}

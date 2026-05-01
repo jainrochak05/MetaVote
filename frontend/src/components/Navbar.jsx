@@ -10,6 +10,7 @@ export default function Navbar() {
     { to: "/register", label: "Register" },
     { to: "/vote", label: "Vote" },
     { to: "/results", label: "Results" },
+    { to: "/txlog", label: "Tx Log" },
   ];
 
   const shortAddress = account

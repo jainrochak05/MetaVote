@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ethers } from "ethers";
 import { useWallet } from "../context/WalletContext";
+import { logTransaction } from "../utils/txLogger";
 
 export default function RegisterPage() {
-  const { account, contract, connectWallet, isConnected, connecting, chainError } = useWallet();
+  const { account, contract, provider, connectWallet, isConnected, connecting, chainError } = useWallet();
 
   const [candidateName, setCandidateName] = useState("");
   const [manifestoText, setManifestoText] = useState("");
@@ -11,11 +12,6 @@ export default function RegisterPage() {
   const [alreadyRegistered, setAlreadyRegistered] = useState(false);
   const [status, setStatus] = useState(null); // { type: "info"|"success"|"error", text }
   const [submitting, setSubmitting] = useState(false);
-
-  const manifestoHash = useMemo(() => {
-    if (!manifestoText.trim()) return "";
-    return ethers.keccak256(ethers.toUtf8Bytes(manifestoText.trim()));
-  }, [manifestoText]);
 
   const loadFeeAndCheck = useCallback(async () => {
     if (!contract || !account) return;
@@ -48,7 +44,7 @@ export default function RegisterPage() {
       return;
     }
     if (!manifestoText.trim()) {
-      setStatus({ type: "error", text: "Please enter manifesto text." });
+      setStatus({ type: "error", text: "Please enter your manifesto." });
       return;
     }
     if (alreadyRegistered) {
@@ -60,12 +56,43 @@ export default function RegisterPage() {
     setStatus({ type: "info", text: "Awaiting MetaMask confirmation…" });
 
     try {
-      const feeToPay = registrationFee ?? ethers.parseEther("0.1");
-      const tx = await contract.registerCandidate(candidateName.trim(), manifestoHash, {
+      const feeToPay = registrationFee ?? ethers.parseEther("5");
+
+      // Capture balance before
+      let balanceBefore = null;
+      try {
+        if (provider) {
+          balanceBefore = await provider.getBalance(account);
+        }
+      } catch { /* non-critical */ }
+
+      const tx = await contract.registerCandidate(candidateName.trim(), manifestoText.trim(), {
         value: feeToPay,
       });
       setStatus({ type: "info", text: "Transaction submitted. Waiting for confirmation…" });
-      await tx.wait();
+      const receipt = await tx.wait();
+
+      // Capture balance after
+      let balanceAfter = null;
+      try {
+        if (provider) {
+          balanceAfter = await provider.getBalance(account);
+        }
+      } catch { /* non-critical */ }
+
+      logTransaction("CANDIDATE_REGISTRATION", {
+        wallet: account,
+        candidateName: candidateName.trim(),
+        txHash: receipt.hash,
+        blockNumber: receipt.blockNumber,
+        fee: ethers.formatEther(feeToPay),
+        balanceBefore: balanceBefore !== null ? ethers.formatEther(balanceBefore) : null,
+        balanceAfter: balanceAfter !== null ? ethers.formatEther(balanceAfter) : null,
+        balanceChange: (balanceBefore !== null && balanceAfter !== null)
+          ? ethers.formatEther(balanceAfter - balanceBefore)
+          : null,
+      });
+
       setCandidateName("");
       setManifestoText("");
       setStatus({ type: "success", text: "🎉 Candidate registered successfully!" });
@@ -142,21 +169,27 @@ export default function RegisterPage() {
               placeholder="Describe your vision, goals, and platform…"
               disabled={submitting}
             />
-            <p className="field-hint">Your manifesto will be hashed and stored on-chain for integrity.</p>
+            <p className="field-hint">
+              Your manifesto will be stored permanently on the blockchain — a{" "}
+              <strong>public ledger entry and digital contract</strong> between you and every voter.
+              It is immutable and cannot be changed after registration.
+            </p>
           </div>
 
-          {manifestoHash && (
-            <div className="hash-display">
-              <span className="hash-label">Manifesto Hash</span>
-              <code className="hash-value">{manifestoHash}</code>
-            </div>
-          )}
+          <div className="manifesto-pledge-banner">
+            <span className="pledge-icon">📜</span>
+            <span>
+              By registering, you acknowledge that your manifesto becomes a{" "}
+              <strong>binding public commitment</strong> visible to all voters,
+              permanently recorded on the blockchain.
+            </span>
+          </div>
 
           <div className="fee-banner">
             <span className="fee-icon">💰</span>
             <span>
               Registration fee:{" "}
-              <strong>{registrationFee ? ethers.formatEther(registrationFee) : "0.1"} ETH</strong>
+              <strong>{registrationFee ? ethers.formatEther(registrationFee) : "5"} ETH</strong>
             </span>
           </div>
 
