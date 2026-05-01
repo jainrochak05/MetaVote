@@ -1,7 +1,7 @@
-export const SEPOLIA_CHAIN_ID = "0x7A6A"; // 31338;
+export const SEPOLIA_CHAIN_ID = "0x7A6A"; // 31338 ;
 
 export const CONTRACT_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
-export const RPC_URL = "https://f0ab-2405-201-400b-5039-353a-4530-848c-c5df.ngrok-free.app";
+export const RPC_URL = "https://4e77-2405-201-400b-5039-353a-4530-848c-c5df.ngrok-free.app";
 
 export const CONTRACT_ABI = [
   {
@@ -54,20 +54,6 @@ export const CONTRACT_ABI = [
       { "internalType": "bool", "name": "voted", "type": "bool" },
       { "internalType": "uint256", "name": "candidateId", "type": "uint256" }
     ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [{ "internalType": "address", "name": "", "type": "address" }],
-    "name": "isCandidate",
-    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [{ "internalType": "address", "name": "", "type": "address" }],
-    "name": "hasVoted",
-    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
     "stateMutability": "view",
     "type": "function"
   },
