@@ -10,6 +10,7 @@ export default function RegisterPage() {
   const [manifestoText, setManifestoText] = useState("");
   const [registrationFee, setRegistrationFee] = useState(null);
   const [alreadyRegistered, setAlreadyRegistered] = useState(false);
+  const [justRegistered, setJustRegistered] = useState(false);
   const [status, setStatus] = useState(null); // { type: "info"|"success"|"error", text }
   const [submitting, setSubmitting] = useState(false);
 
@@ -56,7 +57,7 @@ export default function RegisterPage() {
     setStatus({ type: "info", text: "Awaiting MetaMask confirmation…" });
 
     try {
-      const feeToPay = registrationFee ?? ethers.parseEther("5");
+      const feeToPay = registrationFee ?? ethers.parseEther("500");
 
       // Capture balance before
       let balanceBefore = null;
@@ -95,6 +96,7 @@ export default function RegisterPage() {
 
       setCandidateName("");
       setManifestoText("");
+      setJustRegistered(true);
       setStatus({ type: "success", text: "🎉 Candidate registered successfully!" });
       await loadFeeAndCheck();
     } catch (err) {
@@ -129,6 +131,16 @@ export default function RegisterPage() {
           <button className="btn-primary" onClick={handleConnect} disabled={connecting}>
             {connecting ? "Connecting…" : "Connect MetaMask"}
           </button>
+        </div>
+      ) : alreadyRegistered && justRegistered ? (
+        <div className="card already-registered">
+          <div className="already-icon">🎉</div>
+          <h2>Thank You for Registering!</h2>
+          <p>
+            Wallet <code className="addr">{account}</code> is now registered as a candidate.
+            Your name and manifesto are permanently stored on the blockchain.
+          </p>
+          <p className="hint">Your candidacy is live! Voters can now view your manifesto and vote for you.</p>
         </div>
       ) : alreadyRegistered ? (
         <div className="card already-registered">
@@ -189,7 +201,7 @@ export default function RegisterPage() {
             <span className="fee-icon">💰</span>
             <span>
               Registration fee:{" "}
-              <strong>{registrationFee ? ethers.formatEther(registrationFee) : "5"} ETH</strong>
+              <strong>{registrationFee ? ethers.formatEther(registrationFee) : "500"} ETH</strong>
             </span>
           </div>
 
