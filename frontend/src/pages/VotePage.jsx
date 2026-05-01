@@ -28,10 +28,18 @@ export default function VotePage() {
       }));
       setCandidates(list);
 
-      // Check if the connected wallet is a registered candidate
-      const selfCandidate = list.some(
-        (c) => c.wallet.toLowerCase() === account.toLowerCase()
-      );
+      // Check if the connected wallet is a registered candidate — use the on-chain
+      // mapping directly so the check is reliable even if the candidates list is stale.
+      let selfCandidate = false;
+      try {
+        selfCandidate = await contract.isCandidate(account);
+      } catch (err) {
+        // Fallback: derive from the fetched list if the direct call fails
+        console.warn("isCandidate direct call failed, falling back to list scan:", err);
+        selfCandidate = list.some(
+          (c) => c.wallet.toLowerCase() === account.toLowerCase()
+        );
+      }
       setIsCandidateSelf(selfCandidate);
 
       // Check if user has already voted
@@ -47,7 +55,7 @@ export default function VotePage() {
   useEffect(() => {
     if (isConnected) {
       loadData();
-      const interval = setInterval(loadData, 10000);
+      const interval = setInterval(loadData, 5000);
       return () => clearInterval(interval);
     }
   }, [isConnected, loadData]);
