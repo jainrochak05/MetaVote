@@ -97,6 +97,7 @@ export default function RegisterPage() {
       setCandidateName("");
       setManifestoText("");
       setJustRegistered(true);
+      setAlreadyRegistered(true); // immediately mark ineligible without waiting for re-fetch
       setStatus({ type: "success", text: "🎉 Candidate registered successfully!" });
       await loadFeeAndCheck();
     } catch (err) {
